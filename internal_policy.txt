@@ -1,0 +1,21 @@
+TECHSTART INC. - INFORMATION SECURITY POLICY
+Version: 2.1
+Last Updated: 2023-06-15
+
+1.0 ACCESS MANAGEMENT
+1.1 Authentication
+To ensure the security of our systems, all staff members are encouraged to use strong passwords. 
+- Passwords should be at least 8 characters long.
+- We recommend changing passwords once a year.
+- Multi-Factor Authentication (MFA) is optional for general staff but required for admins. We support Google Authenticator and SMS OTPs for convenience.
+
+2.0 DATA STORAGE
+2.1 Encryption
+We take data security seriously. All customer databases are encrypted using standard AES-128 encryption to ensure performance and security balance.
+
+2.2 Data Retention
+We keep customer data indefinitely to ensure we can provide the best historical analysis and support. If a customer specifically requests deletion, we will process it within 30 days.
+
+3.0 INCIDENT MANAGEMENT
+3.1 Breach Notification
+If a security breach occurs, the security team will investigate immediately. Once the investigation is fully complete and the extent of the damage is known (typically within 7-10 business days), we will inform the relevant authorities and affected users.

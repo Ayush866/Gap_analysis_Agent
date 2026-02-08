@@ -1,0 +1,26 @@
+GLOBAL DATA SECURITY STANDARD (GDSS) v4.0
+Authority: Global Digital Compliance Body
+Date: 2024-01-01
+
+SECTION 3: ACCESS CONTROL
+3.1. Multi-Factor Authentication (MFA)
+(a) All employees with access to sensitive customer data MUST use Multi-Factor Authentication (MFA).
+(b) SMS-based MFA is strictly prohibited due to security vulnerabilities; only app-based authenticators or hardware keys are permitted.
+
+3.2. Password Complexity
+(a) Passwords must be at least 12 characters long.
+(b) Passwords must be rotated every 90 days.
+
+SECTION 4: DATA RETENTION & DELETION
+4.1. Data Minimization
+(a) Customer personal data shall not be retained for longer than is necessary for the purposes for which the personal data are processed.
+(b) A strict maximum retention period of 5 years from the last customer interaction is mandated, after which data must be permanently anonymized or deleted.
+
+SECTION 5: INCIDENT RESPONSE
+5.1. Reporting Timeline
+(a) In the event of a data breach, the organization must notify the regulatory authority within 72 hours of becoming aware of the breach.
+(b) Affected customers must be notified within 48 hours if high-risk data (financial, health) is involved.
+
+SECTION 6: ENCRYPTION
+6.1. Data at Rest
+(a) All sensitive data at rest must be encrypted using AES-256 standard or higher.

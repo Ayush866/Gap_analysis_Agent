@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gap Analysis Agent – Demo</title>
+
+<style>
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    background: linear-gradient(135deg, #1e3c72, #764ba2);
+    min-height: 100vh;
+    padding: 30px;
+}
+
+.container {
+    max-width: 1100px;
+    margin: auto;
+    background: white;
+    border-radius: 18px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    overflow: hidden;
+}
+
+.header {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 30px;
+    text-align: center;
+}
+
+.content {
+    padding: 40px;
+}
+
+label {
+    font-weight: 600;
+    display: block;
+    margin-top: 20px;
+}
+
+input[type="file"] {
+    width: 100%;
+    padding: 14px;
+    border: 2px dashed #cbd5e0;
+    border-radius: 10px;
+    background: #f7fafc;
+}
+
+button {
+    width: 100%;
+    margin-top: 30px;
+    padding: 16px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.hidden { display: none; }
+
+.loader {
+    text-align: center;
+    font-size: 18px;
+    padding: 40px;
+}
+
+.section {
+    margin-top: 40px;
+}
+
+.section h2 {
+    border-bottom: 2px solid #667eea;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    color: #2d3748;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.summary-card {
+    background: #f7fafc;
+    padding: 20px;
+    border-radius: 12px;
+    border-left: 5px solid #667eea;
+}
+
+.summary-card span {
+    font-size: 12px;
+    color: #718096;
+    text-transform: uppercase;
+}
+
+.summary-card strong {
+    display: block;
+    font-size: 28px;
+    margin-top: 5px;
+}
+
+.gap-card {
+    background: #f7fafc;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 25px;
+    border-left: 6px solid;
+}
+
+.badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+}
+
+.critical { background: #e53e3e; }
+.high { background: #dd6b20; }
+.medium { background: #d69e2e; }
+.low { background: #38a169; }
+
+.meta {
+    font-size: 13px;
+    color: #718096;
+    margin-bottom: 15px;
+}
+
+.block {
+    margin-top: 12px;
+}
+
+.block strong {
+    color: #2d3748;
+}
+
+.error {
+    background: #fff5f5;
+    border: 2px solid #fc8181;
+    color: #c53030;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>🔍 Gap Analysis Agent</h1>
+        <p>AI-Powered Regulatory Compliance Analysis</p>
+    </div>
+
+    <div class="content">
+
+        <!-- Upload -->
+        <form id="uploadForm" action="javascript:void(0);" enctype="multipart/form-data">
+            <label>Regulatory Document</label>
+            <input type="file" id="regDoc" required />
+
+            <label>Internal Policy Document</label>
+            <input type="file" id="intDoc" required />
+
+            <button type="button" id="submitBtn">🚀 Run Analysis</button>
+        </form>
+
+        <!-- Loading -->
+        <div id="loading" class="loader hidden">
+            🤖 Analyzing documents… please wait
+        </div>
+
+        <!-- Error -->
+        <div id="errorBox" class="error hidden"></div>
+
+        <!-- Results -->
+        <div id="results" class="hidden">
+
+            <!-- Summary -->
+            <div class="section">
+                <h2>📊 Executive Summary</h2>
+                <div class="summary-grid" id="summaryGrid"></div>
+            </div>
+
+            <!-- Gaps -->
+            <div class="section">
+                <h2>⚠️ Identified Compliance Gaps</h2>
+                <div id="gapsContainer"></div>
+            </div>
+
+            <button onclick="location.reload()">➕ New Analysis</button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+const API_URL = "http://localhost:8000/analyze";
+
+document.getElementById("submitBtn").onclick = async () => {
+    const reg = document.getElementById("regDoc").files[0];
+    const intDoc = document.getElementById("intDoc").files[0];
+
+    if (!reg || !intDoc) return alert("Select both documents");
+
+    const fd = new FormData();
+    fd.append("regulatory_doc", reg);
+    fd.append("internal_doc", intDoc);
+
+    document.getElementById("uploadForm").classList.add("hidden");
+    document.getElementById("loading").classList.remove("hidden");
+
+    try {
+        const res = await fetch(API_URL, { method: "POST", body: fd });
+        const json = await res.json();
+
+        if (!res.ok || json.status !== "success") {
+            throw new Error(json.message);
+        }
+
+        render(json.data);
+
+    } catch (e) {
+        document.getElementById("errorBox").innerText = e.message;
+        document.getElementById("errorBox").classList.remove("hidden");
+    } finally {
+        document.getElementById("loading").classList.add("hidden");
+    }
+};
+
+function render(data) {
+    document.getElementById("results").classList.remove("hidden");
+
+    /* Executive Summary */
+    const s = data.executive_summary;
+    document.getElementById("summaryGrid").innerHTML = `
+        <div class="summary-card"><span>Compliance Score</span><strong>${s.overall_compliance_score}</strong></div>
+        <div class="summary-card"><span>Total Requirements</span><strong>${s.total_requirements}</strong></div>
+        <div class="summary-card"><span>Gaps Identified</span><strong>${s.gaps_identified}</strong></div>
+        <div class="summary-card"><span>Critical Gaps</span><strong>${s.critical_gaps}</strong></div>
+    `;
+
+    /* Gaps */
+    const container = document.getElementById("gapsContainer");
+    container.innerHTML = "";
+
+    data.gaps.forEach(gap => {
+        const sev = gap.severity.toLowerCase();
+        container.innerHTML += `
+            <div class="gap-card" style="border-color:var(--${sev})">
+                <div class="meta">
+                    <strong>${gap.id}</strong>
+                    <span class="badge ${sev}">${gap.severity.toUpperCase()}</span>
+                    • Section ${gap.regulatory_reference.section}
+                </div>
+
+                <div class="block">
+                    <strong>Regulatory Requirement</strong><br/>
+                    ${gap.regulatory_reference.text}
+                </div>
+
+                <div class="block">
+                    <strong>Internal Coverage Analysis</strong><br/>
+                    ${gap.internal_coverage.coverage_text}
+                </div>
+
+                <div class="block">
+                    <strong>Confidence Score:</strong> ${gap.confidence_score}
+                </div>
+
+                <div class="block">
+                    <strong>Recommendation</strong><br/>
+                    ${gap.recommendation}
+                </div>
+            </div>
+        `;
+    });
+}
+</script>
+
+</body>
+</html>
