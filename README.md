@@ -91,3 +91,7 @@ Frontend (Demo) | HTML + Vanilla JS |
 ├── .env.example           # Environment variable template
 ├── requirements.txt
 └── README.md
+
+https://github.com/user-attachments/assets/b2921171-101c-451c-9d56-f41e2c4d72bc
+
+
